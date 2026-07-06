@@ -1,11 +1,10 @@
-/* On It — daily brief front-end. No frameworks, no build step. */
+/* On It — trending brief front-end. No frameworks, no build step. */
 
 (() => {
   "use strict";
 
   const SAVE_KEY = "onit.saved.v1";
   const THEME_KEY = "onit.theme";
-  const VOICE_KEY = "onit.voice";
   const SAVE_TTL_DAYS = 7;
 
   const el = {
@@ -17,21 +16,14 @@
     themeToggle: document.getElementById("theme-toggle"),
     narrateBtn: document.getElementById("narrate-btn"),
     narrateLabel: document.getElementById("narrate-label"),
-    pauseBtn: document.getElementById("pause-btn"),
     stopBtn: document.getElementById("stop-btn"),
-    voiceSelect: document.getElementById("voice-select"),
     nowReading: document.getElementById("now-reading"),
+    audio: document.getElementById("narration-audio"),
   };
 
-  let state = {
-    data: null,
-    briefs: [],
-    filter: "all",
-  };
+  const state = { data: null, briefs: [], view: "all", hasAudio: false };
 
-  // ---------------------------------------------------------------------
-  // Theme
-  // ---------------------------------------------------------------------
+  // ---------------------------------------------------------------- theme
   function initTheme() {
     const saved = localStorage.getItem(THEME_KEY);
     if (saved) document.documentElement.setAttribute("data-theme", saved);
@@ -44,9 +36,7 @@
     });
   }
 
-  // ---------------------------------------------------------------------
-  // Saved pins (localStorage, auto-pruned after 7 days)
-  // ---------------------------------------------------------------------
+  // ---------------------------------------------------------------- saved
   function loadSaved() {
     let map = {};
     try { map = JSON.parse(localStorage.getItem(SAVE_KEY)) || {}; } catch (_) {}
@@ -58,71 +48,49 @@
     if (changed) localStorage.setItem(SAVE_KEY, JSON.stringify(map));
     return map;
   }
-
   function isSaved(id) { return !!loadSaved()[id]; }
-
   function toggleSave(brief) {
     const map = loadSaved();
-    if (map[brief.id]) {
-      delete map[brief.id];
-    } else {
-      map[brief.id] = { savedAt: Date.now(), brief };
-    }
+    if (map[brief.id]) delete map[brief.id];
+    else map[brief.id] = { savedAt: Date.now(), brief };
     localStorage.setItem(SAVE_KEY, JSON.stringify(map));
   }
-
   function savedBriefs() {
-    const map = loadSaved();
-    return Object.values(map)
-      .sort((a, b) => b.savedAt - a.savedAt)
-      .map((x) => x.brief);
+    return Object.values(loadSaved()).sort((a, b) => b.savedAt - a.savedAt).map((x) => x.brief);
   }
 
-  // ---------------------------------------------------------------------
-  // Rendering
-  // ---------------------------------------------------------------------
-  function catEmoji(name) {
-    const found = (state.data?.interests || []).find((i) => i.name === name);
-    return found ? found.emoji : "•";
-  }
-
-  function briefsForFilter() {
-    if (state.filter === "__saved__") return savedBriefs();
-    if (state.filter === "all") return state.briefs;
-    return state.briefs.filter((b) => b.category === state.filter);
+  // ---------------------------------------------------------------- render
+  function currentList() {
+    return state.view === "saved" ? savedBriefs() : state.briefs;
   }
 
   function render() {
-    const list = briefsForFilter();
+    const list = currentList();
     el.feed.innerHTML = "";
-
     if (!list.length) {
       el.empty.hidden = false;
-      el.empty.textContent = state.filter === "__saved__"
+      el.empty.textContent = state.view === "saved"
         ? "No saved briefs yet. Tap 📌 Save on anything you want to keep — pins last 7 days."
-        : "No briefs here right now. Check back after the next daily refresh.";
+        : "Nothing trending right now. Check back after the next refresh.";
       return;
     }
     el.empty.hidden = true;
-
-    for (const b of list) {
-      el.feed.appendChild(card(b));
-    }
+    list.forEach((b, i) => el.feed.appendChild(card(b, i)));
   }
 
-  function card(b) {
+  function card(b, i) {
     const node = document.createElement("article");
     node.className = "card";
     node.dataset.id = b.id;
-
     const saved = isSaved(b.id);
-    const meta = [b.source, b.engagement].filter(Boolean)
-      .map((s) => `<span class="src">${escapeHtml(s)}</span>`)
+    const meta = [b.trend ? `🔎 ${b.trend}` : "", b.engagement, b.source]
+      .filter(Boolean).map((s) => `<span class="src">${escapeHtml(s)}</span>`)
       .join('<span class="dot">·</span>');
 
     node.innerHTML = `
       <div class="card-top">
-        <span class="cat-tag">${catEmoji(b.category)} ${escapeHtml(b.category)}</span>
+        <span class="rank">#${i + 1}</span>
+        ${b.traffic ? `<span class="cat-tag">🔥 ${escapeHtml(b.traffic)} searches</span>` : ""}
       </div>
       <h2>${escapeHtml(b.title)}</h2>
       <p class="summary">${escapeHtml(b.summary || "")}</p>
@@ -130,217 +98,122 @@
       <div class="card-actions">
         <a class="btn btn-learn" href="${encodeURI(b.url || "#")}" target="_blank" rel="noopener">Learn more ↗</a>
         <button class="btn btn-save ${saved ? "saved" : ""}">${saved ? "📌 Saved" : "📌 Save"}</button>
-      </div>
-    `;
-
-    node.querySelector(".btn-save").addEventListener("click", () => {
-      toggleSave(b);
-      render();
-    });
+      </div>`;
+    node.querySelector(".btn-save").addEventListener("click", () => { toggleSave(b); render(); });
     return node;
   }
 
-  function renderFilters() {
-    // insert interest chips between "All" and "Saved"
-    const savedChip = el.filters.querySelector(".chip-saved");
-    for (const i of state.data.interests) {
-      const c = document.createElement("button");
-      c.className = "chip";
-      c.dataset.cat = i.name;
-      c.textContent = `${i.emoji} ${i.name}`;
-      el.filters.insertBefore(c, savedChip);
-    }
+  function initFilters() {
     el.filters.addEventListener("click", (e) => {
       const chip = e.target.closest(".chip");
       if (!chip) return;
-      state.filter = chip.dataset.cat;
+      state.view = chip.dataset.view;
       el.filters.querySelectorAll(".chip").forEach((c) => c.classList.remove("active"));
       chip.classList.add("active");
       render();
     });
   }
 
-  // ---------------------------------------------------------------------
-  // Narration (Web Speech API) — prefers an Indian-English voice
-  // ---------------------------------------------------------------------
-  let voices = [];
-  let queue = [];
+  // ------------------------------------------------------------ narration
+  // Preferred path: play the pre-generated neural-voice MP3 (titles only).
+  // Fallback: browser speech synthesis reading titles only.
   let speaking = false;
 
-  function loadVoices() {
-    voices = speechSynthesis.getVoices();
-    el.voiceSelect.innerHTML = "";
-
-    // rank: en-IN first, then anything with "India"/"Hindi", then other English
-    const ranked = [...voices].sort((a, b) => score(b) - score(a));
-    function score(v) {
-      let s = 0;
-      const lang = (v.lang || "").toLowerCase();
-      const name = (v.name || "").toLowerCase();
-      if (lang === "en-in") s += 100;
-      if (/india|hindi/.test(name)) s += 60;
-      if (lang.startsWith("en")) s += 20;
-      return s;
-    }
-
-    ranked.forEach((v) => {
-      const opt = document.createElement("option");
-      opt.value = v.name;
-      opt.textContent = `${v.name} (${v.lang})`;
-      el.voiceSelect.appendChild(opt);
-    });
-
-    const savedVoice = localStorage.getItem(VOICE_KEY);
-    if (savedVoice && ranked.some((v) => v.name === savedVoice)) {
-      el.voiceSelect.value = savedVoice;
-    } else if (ranked.length) {
-      el.voiceSelect.value = ranked[0].name; // best Indian-English match
-    }
-  }
-
-  function chosenVoice() {
-    return voices.find((v) => v.name === el.voiceSelect.value) || null;
-  }
-
-  function buildScript() {
-    const list = briefsForFilter();
-    const d = state.data;
-    const parts = [];
-    const scope = state.filter === "all" ? "today's" :
-                  state.filter === "__saved__" ? "your saved" :
-                  `today's ${state.filter}`;
-    parts.push({
-      text: `Here is ${scope} brief for ${d.date_label}. There are ${list.length} ${list.length === 1 ? "story" : "stories"} to catch you up.`,
-      id: null,
-    });
-    list.forEach((b, i) => {
-      parts.push({
-        text: `Story ${i + 1}, in ${b.category}. ${b.title}. ${b.summary || ""} Source: ${cleanSource(b.source)}.`,
-        id: b.id,
-      });
-    });
-    parts.push({ text: "That's your brief. You're all caught up.", id: null });
-    return parts;
-  }
-
-  function cleanSource(s) {
-    return (s || "").replace(/·/g, " from ");
-  }
-
-  function speakNext() {
-    if (!queue.length) { endNarration(); return; }
-    const part = queue.shift();
-    highlight(part.id);
-
-    const u = new SpeechSynthesisUtterance(part.text);
-    const v = chosenVoice();
-    if (v) { u.voice = v; u.lang = v.lang; }
-    else { u.lang = "en-IN"; }
-    u.rate = 0.98;
-    u.pitch = 1.0;
-    u.onend = speakNext;
-    u.onerror = speakNext;
-    speechSynthesis.speak(u);
-  }
-
-  function highlight(id) {
-    document.querySelectorAll(".card.reading").forEach((c) => c.classList.remove("reading"));
-    if (!id) { el.nowReading.hidden = true; return; }
-    const card = el.feed.querySelector(`.card[data-id="${id}"]`);
-    if (card) {
-      card.classList.add("reading");
-      card.scrollIntoView({ behavior: "smooth", block: "center" });
-      const title = card.querySelector("h2")?.textContent || "";
-      el.nowReading.hidden = false;
-      el.nowReading.textContent = "▶ " + title;
-    }
+  function titlesText() {
+    const list = currentList();
+    const parts = [`Here is your trending brief for ${state.data.date_label}.`];
+    list.forEach((b, i) => parts.push(`Number ${i + 1}. ${b.title}.`));
+    parts.push("That's all the trending stories for now.");
+    return parts.join("  ");
   }
 
   function startNarration() {
+    if (state.hasAudio && state.view === "all") {
+      el.audio.currentTime = 0;
+      el.audio.play().then(showPlaying).catch(fallbackSpeak);
+    } else {
+      fallbackSpeak();
+    }
+  }
+
+  function fallbackSpeak() {
     if (!("speechSynthesis" in window)) {
-      alert("Your browser doesn't support voice narration.");
+      alert("Voice narration isn't supported in this browser.");
       return;
     }
     speechSynthesis.cancel();
-    queue = buildScript();
+    const u = new SpeechSynthesisUtterance(titlesText());
+    // best available English voice, preferring Indian English
+    const voices = speechSynthesis.getVoices();
+    const pick = voices.find((v) => (v.lang || "").toLowerCase() === "en-in")
+      || voices.find((v) => /natural|google/i.test(v.name) && /^en/i.test(v.lang))
+      || voices.find((v) => /^en/i.test(v.lang));
+    if (pick) { u.voice = pick; u.lang = pick.lang; } else { u.lang = "en-IN"; }
+    u.rate = 0.98;
+    u.onend = endNarration;
+    u.onerror = endNarration;
     speaking = true;
-    el.narrateLabel.textContent = "Narrating…";
+    showPlaying();
+    speechSynthesis.speak(u);
+  }
+
+  function showPlaying() {
     el.narrateBtn.disabled = true;
-    el.pauseBtn.hidden = false;
+    el.narrateLabel.textContent = "Narrating…";
     el.stopBtn.hidden = false;
-    speakNext();
+    el.nowReading.hidden = false;
+    el.nowReading.textContent = "▶ Reading today's headlines…";
   }
 
   function endNarration() {
     speaking = false;
-    speechSynthesis.cancel();
+    try { el.audio.pause(); } catch (_) {}
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
     el.narrateBtn.disabled = false;
-    el.narrateLabel.textContent = "Narrate today's brief";
-    el.pauseBtn.hidden = true;
+    el.narrateLabel.textContent = "Narrate the headlines";
     el.stopBtn.hidden = true;
-    el.pauseBtn.textContent = "⏸ Pause";
     el.nowReading.hidden = true;
-    document.querySelectorAll(".card.reading").forEach((c) => c.classList.remove("reading"));
   }
 
   function initNarration() {
-    loadVoices();
-    // voices load async in most browsers
-    if (speechSynthesis.onvoiceschanged !== undefined) {
-      speechSynthesis.onvoiceschanged = loadVoices;
-    }
-    el.voiceSelect.addEventListener("change", () =>
-      localStorage.setItem(VOICE_KEY, el.voiceSelect.value));
-
     el.narrateBtn.addEventListener("click", startNarration);
     el.stopBtn.addEventListener("click", endNarration);
-    el.pauseBtn.addEventListener("click", () => {
-      if (speechSynthesis.paused) {
-        speechSynthesis.resume();
-        el.pauseBtn.textContent = "⏸ Pause";
-      } else {
-        speechSynthesis.pause();
-        el.pauseBtn.textContent = "▶ Resume";
-      }
-    });
+    el.audio.addEventListener("ended", endNarration);
   }
 
-  // ---------------------------------------------------------------------
-  // Utils
-  // ---------------------------------------------------------------------
+  // ------------------------------------------------------------ utils
   function escapeHtml(s) {
     return String(s || "").replace(/[&<>"']/g, (c) =>
       ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
+  function showBanner(msg) { el.banner.hidden = false; el.banner.textContent = msg; }
 
-  function showBanner(msg) {
-    el.banner.hidden = false;
-    el.banner.textContent = msg;
-  }
-
-  // ---------------------------------------------------------------------
-  // Boot
-  // ---------------------------------------------------------------------
+  // ------------------------------------------------------------ boot
   async function boot() {
     initTheme();
     try {
       const res = await fetch("data/briefs.json?_=" + Date.now());
-      if (!res.ok) throw new Error("no data file");
+      if (!res.ok) throw new Error("no data");
       state.data = await res.json();
     } catch (e) {
-      el.dateLabel.textContent = "Couldn't load today's brief.";
-      showBanner("No brief data found yet. Run the daily crawler (GitHub Action) to populate it.");
+      el.dateLabel.textContent = "Couldn't load the brief.";
+      showBanner("No brief data yet. Run the daily crawler (GitHub Action) to populate it.");
       return;
     }
-
     state.briefs = state.data.briefs || [];
-    el.dateLabel.textContent = `${state.data.date_label} · ${state.briefs.length} briefs`;
-
+    el.dateLabel.textContent = `${state.data.date_label} · ${state.briefs.length} trending`;
     if (state.data.sample) {
-      showBanner("👋 Showing sample briefs. Your first daily GitHub Action run will replace these with real trending stories.");
+      showBanner("👋 Showing sample data. Your first daily GitHub Action run will replace these with real trending searches.");
     }
 
-    renderFilters();
+    // wire up the neural-voice MP3 if it exists
+    const audioUrl = "data/narration.mp3?v=" + encodeURIComponent(state.data.generated_at || "");
+    try {
+      const head = await fetch(audioUrl, { method: "HEAD" });
+      if (head.ok) { state.hasAudio = true; el.audio.src = audioUrl; }
+    } catch (_) { /* fall back to browser voice */ }
+
+    initFilters();
     initNarration();
     render();
   }

@@ -3,49 +3,37 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>On It — your daily brief</title>
-  <meta name="description" content="A daily brief of the trending things in AI, Design, Marketing and Tech — with a voice that reads them to you." />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📰</text></svg>" />
+  <title>On It — what's trending</title>
+  <meta name="description" content="A daily brief of what the world is searching for — the crazy, interesting, trending things. With a clean voice that reads the headlines to you." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>" />
   <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
   <header class="topbar">
     <div class="brand">
-      <span class="brand-mark">📰</span>
+      <span class="brand-mark">🔥</span>
       <div>
         <h1>On It</h1>
-        <p class="tagline" id="date-label">Loading your brief…</p>
+        <p class="tagline" id="date-label">Loading what's trending…</p>
       </div>
     </div>
-
-    <div class="topbar-actions">
-      <button id="theme-toggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">🌗</button>
-    </div>
+    <button id="theme-toggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">🌗</button>
   </header>
 
   <!-- Narration bar -->
-  <section class="narrator" id="narrator">
+  <section class="narrator">
     <button id="narrate-btn" class="narrate-btn">
       <span class="narrate-icon">🔊</span>
-      <span id="narrate-label">Narrate today's brief</span>
+      <span id="narrate-label">Narrate the headlines</span>
     </button>
-
-    <div class="narrate-controls">
-      <button id="pause-btn" class="pill" hidden>⏸ Pause</button>
-      <button id="stop-btn" class="pill" hidden>⏹ Stop</button>
-      <label class="voice-picker">
-        <span>Voice</span>
-        <select id="voice-select" aria-label="Choose narration voice"></select>
-      </label>
-    </div>
+    <button id="stop-btn" class="stop-btn" hidden>⏹ Stop</button>
     <p class="now-reading" id="now-reading" hidden></p>
   </section>
 
   <!-- Filters -->
-  <nav class="filters" id="filters" aria-label="Filter by interest">
-    <button class="chip active" data-cat="all">All</button>
-    <!-- interest chips injected here -->
-    <button class="chip chip-saved" data-cat="__saved__">📌 Saved</button>
+  <nav class="filters" id="filters" aria-label="Filter">
+    <button class="chip active" data-view="all">🔥 Trending</button>
+    <button class="chip chip-saved" data-view="saved">📌 Saved</button>
   </nav>
 
   <main>
@@ -55,10 +43,11 @@
   </main>
 
   <footer class="foot">
-    <p>On It · trending briefs in AI · Design · Marketing · Tech</p>
-    <p class="foot-sub">Refreshed daily by a GitHub Action. Voice by your browser. Saved pins kept for 7 days.</p>
+    <p>On It · what the world is searching for, every day</p>
+    <p class="foot-sub">Powered by Google Trends · voice by Edge Neural TTS · saved pins kept 7 days</p>
   </footer>
 
+  <audio id="narration-audio" preload="none"></audio>
   <script src="assets/app.js"></script>
 </body>
 </html>
