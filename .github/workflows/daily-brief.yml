@@ -1,0 +1,63 @@
+name: Daily brief
+
+on:
+  schedule:
+    # 00:30 UTC == 06:00 IST — fresh brief waiting each morning
+    - cron: "30 0 * * *"
+  workflow_dispatch: {}      # run it by hand from the Actions tab any time
+  push:
+    branches: [main]         # redeploy the site when you push changes
+
+permissions:
+  contents: write            # to commit the refreshed briefs.json
+  pages: write               # to deploy to GitHub Pages
+  id-token: write            # required by deploy-pages
+
+# never run two deploys at once
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Only crawl on schedule / manual run. On a plain push we just redeploy.
+      - name: Gather trending briefs
+        if: github.event_name != 'push'
+        run: python scripts/fetch_briefs.py
+
+      - name: Commit refreshed briefs
+        if: github.event_name != 'push'
+        run: |
+          git config user.name "on-it-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/briefs.json
+          if git diff --cached --quiet; then
+            echo "No brief changes today."
+          else
+            git commit -m "chore: daily brief $(date -u +%F)"
+            git push
+          fi
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

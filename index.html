@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>On It — your daily brief</title>
+  <meta name="description" content="A daily brief of the trending things in AI, Design, Marketing and Tech — with a voice that reads them to you." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📰</text></svg>" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">📰</span>
+      <div>
+        <h1>On It</h1>
+        <p class="tagline" id="date-label">Loading your brief…</p>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <button id="theme-toggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">🌗</button>
+    </div>
+  </header>
+
+  <!-- Narration bar -->
+  <section class="narrator" id="narrator">
+    <button id="narrate-btn" class="narrate-btn">
+      <span class="narrate-icon">🔊</span>
+      <span id="narrate-label">Narrate today's brief</span>
+    </button>
+
+    <div class="narrate-controls">
+      <button id="pause-btn" class="pill" hidden>⏸ Pause</button>
+      <button id="stop-btn" class="pill" hidden>⏹ Stop</button>
+      <label class="voice-picker">
+        <span>Voice</span>
+        <select id="voice-select" aria-label="Choose narration voice"></select>
+      </label>
+    </div>
+    <p class="now-reading" id="now-reading" hidden></p>
+  </section>
+
+  <!-- Filters -->
+  <nav class="filters" id="filters" aria-label="Filter by interest">
+    <button class="chip active" data-cat="all">All</button>
+    <!-- interest chips injected here -->
+    <button class="chip chip-saved" data-cat="__saved__">📌 Saved</button>
+  </nav>
+
+  <main>
+    <div id="banner" class="banner" hidden></div>
+    <div id="feed" class="feed" aria-live="polite"></div>
+    <div id="empty" class="empty" hidden></div>
+  </main>
+
+  <footer class="foot">
+    <p>On It · trending briefs in AI · Design · Marketing · Tech</p>
+    <p class="foot-sub">Refreshed daily by a GitHub Action. Voice by your browser. Saved pins kept for 7 days.</p>
+  </footer>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

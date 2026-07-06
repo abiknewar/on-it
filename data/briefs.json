@@ -1,0 +1,86 @@
+{
+  "generated_at": "2026-07-06T06:00:00+00:00",
+  "date_label": "Monday, 06 July 2026",
+  "sample": true,
+  "interests": [
+    { "name": "AI", "emoji": "🤖" },
+    { "name": "Design", "emoji": "🎨" },
+    { "name": "Marketing", "emoji": "📈" },
+    { "name": "Tech", "emoji": "💻" }
+  ],
+  "count": 6,
+  "briefs": [
+    {
+      "id": "sample000001",
+      "title": "Sample: A new open-source LLM claims GPT-class performance at a fraction of the cost",
+      "summary": "This is placeholder text so the site renders before your first crawl. Once the daily GitHub Action runs, real trending AI stories from Hacker News, Reddit and Google News appear here.",
+      "url": "https://news.ycombinator.com/",
+      "source": "Hacker News",
+      "category": "AI",
+      "published": "2026-07-06T05:10:00+00:00",
+      "score": 312.0,
+      "engagement": "312 points · 140 comments",
+      "domain": "news.ycombinator.com"
+    },
+    {
+      "id": "sample000002",
+      "title": "Sample: Popular design tool ships an AI layout assistant",
+      "summary": "Placeholder brief. Real Design stories will replace this after the crawler runs.",
+      "url": "https://www.reddit.com/r/Design/",
+      "source": "Reddit · r/Design",
+      "category": "Design",
+      "published": "2026-07-06T04:40:00+00:00",
+      "score": 88.0,
+      "engagement": "12,400 upvotes · 210 comments",
+      "domain": "reddit.com"
+    },
+    {
+      "id": "sample000003",
+      "title": "Sample: The marketing channel everyone is quietly moving budget into",
+      "summary": "Placeholder brief. Real Marketing stories will replace this after the crawler runs.",
+      "url": "https://www.reddit.com/r/marketing/",
+      "source": "Reddit · r/marketing",
+      "category": "Marketing",
+      "published": "2026-07-06T03:55:00+00:00",
+      "score": 64.0,
+      "engagement": "5,900 upvotes · 88 comments",
+      "domain": "reddit.com"
+    },
+    {
+      "id": "sample000004",
+      "title": "Sample: A well-known startup announces a surprise hardware launch",
+      "summary": "Placeholder brief. Real Tech stories will replace this after the crawler runs.",
+      "url": "https://news.google.com/",
+      "source": "News · The Verge",
+      "category": "Tech",
+      "published": "2026-07-06T05:30:00+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "domain": "google.com"
+    },
+    {
+      "id": "sample000005",
+      "title": "Sample: Researchers publish a technique that speeds up model inference",
+      "summary": "Placeholder brief. Real AI stories will replace this after the crawler runs.",
+      "url": "https://news.ycombinator.com/",
+      "source": "Hacker News",
+      "category": "AI",
+      "published": "2026-07-06T02:20:00+00:00",
+      "score": 156.0,
+      "engagement": "156 points · 47 comments",
+      "domain": "news.ycombinator.com"
+    },
+    {
+      "id": "sample000006",
+      "title": "Sample: A viral case study on a growth experiment that actually worked",
+      "summary": "Placeholder brief. Real Marketing stories will replace this after the crawler runs.",
+      "url": "https://www.reddit.com/r/Entrepreneur/",
+      "source": "Reddit · r/Entrepreneur",
+      "category": "Marketing",
+      "published": "2026-07-06T01:15:00+00:00",
+      "score": 52.0,
+      "engagement": "4,100 upvotes · 63 comments",
+      "domain": "reddit.com"
+    }
+  ]
+}
