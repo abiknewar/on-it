@@ -122,7 +122,11 @@
   function titlesText() {
     const list = currentList();
     const parts = [`Here is your trending brief for ${state.data.date_label}.`];
-    list.forEach((b, i) => parts.push(`Number ${i + 1}. ${b.title}.`));
+    list.forEach((b, i) => {
+      let line = `Number ${i + 1}. ${b.title}.`;
+      if (b.summary) line += ` ${b.summary}`;
+      parts.push(line);
+    });
     parts.push("That's all the trending stories for now.");
     return parts.join("  ");
   }

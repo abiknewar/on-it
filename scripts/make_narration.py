@@ -27,8 +27,12 @@ def build_text():
     briefs = data.get("briefs", [])
     parts = [f"Here is your trending brief for {data.get('date_label', 'today')}."]
     for i, b in enumerate(briefs, 1):
-        # titles only, as requested
-        parts.append(f"Number {i}. {b['title']}.")
+        # title followed by its description so each item is understandable
+        line = f"Number {i}. {b['title']}."
+        summary = (b.get("summary") or "").strip()
+        if summary:
+            line += f" {summary}"
+        parts.append(line)
     parts.append("That's all the trending stories for now.")
     return "  ".join(parts)
 
