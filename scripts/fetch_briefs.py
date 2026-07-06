@@ -31,8 +31,6 @@ TARGET_TOTAL = 20
 USER_AGENT = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
               "(KHTML, like Gecko) Chrome/125.0 Safari/537.36")
 
-HT_NS = "https://trends.google.com/trends/trendingsearches/daily"
-
 OUTPUT = Path(__file__).resolve().parent.parent / "data" / "briefs.json"
 
 
@@ -73,32 +71,55 @@ def _traffic_to_int(s):
         return 0
 
 
+def _locals(elem, localname):
+    """All descendants whose tag local-name matches, ignoring XML namespace."""
+    return [e for e in elem.iter() if e.tag.rsplit("}", 1)[-1] == localname]
+
+
+def _local_text(elem, localname):
+    for e in _locals(elem, localname):
+        if e.text and e.text.strip():
+            return _clean(e.text)
+    return ""
+
+
 def from_google_trends(geo):
-    """Daily trending searches for a region."""
+    """Trending searches for a region.
+
+    Google has shipped several RSS shapes/namespaces for trends, so we try the
+    current "Trending Now" endpoint first, fall back to the older daily feed,
+    and parse fields by local tag name (namespace-agnostic) to survive changes.
+    """
     items = []
-    url = f"https://trends.google.com/trends/trendingsearches/daily/rss?geo={geo}"
-    try:
-        root = ET.fromstring(_get(url))
-    except Exception as e:
-        print(f"  [Trends/{geo}] skipped: {e}")
+    endpoints = [
+        f"https://trends.google.com/trending/rss?geo={geo}",
+        f"https://trends.google.com/trends/trendingsearches/daily/rss?geo={geo}",
+    ]
+    root = None
+    for url in endpoints:
+        try:
+            candidate = ET.fromstring(_get(url))
+            if list(candidate.iter("item")):
+                root = candidate
+                break
+        except Exception as e:
+            print(f"  [Trends/{geo}] {url.split('?')[0]} failed: {e}")
+    if root is None:
+        print(f"  [Trends/{geo}] no items from any endpoint")
         return items
 
     for it in root.iter("item"):
-        term = _clean(it.findtext("title"))
+        term = _local_text(it, "title")
         if not term:
             continue
-        traffic_raw = _clean(it.findtext(f"{{{HT_NS}}}approx_traffic")) or ""
-        picture = (it.findtext(f"{{{HT_NS}}}picture") or "").strip()
+        traffic_raw = _local_text(it, "approx_traffic")
 
-        # first news item gives us the actual, interesting headline
-        news = it.find(f"{{{HT_NS}}}news_item")
-        if news is not None:
-            headline = _clean(news.findtext(f"{{{HT_NS}}}news_item_title"))
-            snippet = _clean(news.findtext(f"{{{HT_NS}}}news_item_snippet"))
-            link = (news.findtext(f"{{{HT_NS}}}news_item_url") or "").strip()
-            src = _clean(news.findtext(f"{{{HT_NS}}}news_item_source"))
-        else:
-            headline, snippet, link, src = "", "", "", ""
+        headline = _local_text(it, "news_item_title")
+        snippet = _local_text(it, "news_item_snippet")
+        links = _locals(it, "news_item_url")
+        link = next((e.text.strip() for e in links if e.text and e.text.strip()), "")
+        src = _local_text(it, "news_item_source")
+        picture = _local_text(it, "news_item_picture") or _local_text(it, "picture")
 
         title = headline or term
         if not link:
@@ -115,7 +136,7 @@ def from_google_trends(geo):
             "geo": geo,
             "picture": picture,
             "published": datetime.now(timezone.utc).isoformat(),
-            "score": _traffic_to_int(traffic_raw),
+            "score": _traffic_to_int(traffic_raw) or 1,
         })
     return items
 
