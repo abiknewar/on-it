@@ -33,25 +33,26 @@ from pathlib import Path
 INTERESTS = {
     "AI": {
         "emoji": "🤖",
-        "hn_query": "AI OR LLM OR OpenAI OR Anthropic OR \"machine learning\"",
+        # HN Algolia has no OR operator, so we run one simple query per term.
+        "hn_terms": ["LLM", "OpenAI", "Anthropic", "AI model", "machine learning"],
         "subreddits": ["artificial", "MachineLearning", "OpenAI", "LocalLLaMA", "singularity"],
         "news_query": "artificial intelligence OR AI launch OR LLM",
     },
     "Design": {
         "emoji": "🎨",
-        "hn_query": "design OR UX OR Figma OR typography",
+        "hn_terms": ["design", "UX", "Figma", "typography"],
         "subreddits": ["Design", "web_design", "userexperience", "graphic_design"],
         "news_query": "design tool OR UX design OR product design",
     },
     "Marketing": {
         "emoji": "📈",
-        "hn_query": "marketing OR growth OR advertising OR SEO",
+        "hn_terms": ["marketing", "growth", "advertising", "SEO"],
         "subreddits": ["marketing", "DigitalMarketing", "SEO", "Entrepreneur"],
         "news_query": "marketing OR growth marketing OR advertising campaign",
     },
     "Tech": {
         "emoji": "💻",
-        "hn_query": "launch OR release OR startup OR product",
+        "hn_terms": ["Show HN", "launch", "startup", "open source"],
         "subreddits": ["technology", "gadgets", "programming", "technews"],
         "news_query": "tech launch OR new gadget OR startup funding",
     },
@@ -103,38 +104,45 @@ def _domain(url):
 # ---------------------------------------------------------------------------
 
 def from_hacker_news(category, cfg, since_ts):
-    """Trending HN stories for this interest (ranked by points)."""
-    items = []
-    q = urllib.parse.quote(cfg["hn_query"])
-    url = (
-        "https://hn.algolia.com/api/v1/search"
-        f"?query={q}&tags=story&numericFilters=created_at_i>{since_ts},points>20"
-        "&hitsPerPage=25"
-    )
-    try:
-        data = _get_json(url)
-    except Exception as e:
-        print(f"  [HN/{category}] skipped: {e}")
-        return items
+    """Trending HN stories for this interest (ranked by points).
 
-    for hit in data.get("hits", []):
-        title = _clean(hit.get("title"))
-        if not title:
+    Algolia has no boolean OR, so we issue one plain query per term and merge.
+    We look back ~2 days and keep anything with a little traction (points > 10)
+    so the engagement signal — the real "trending" signal — is always present.
+    """
+    items = []
+    window = since_ts - 86400  # widen HN look-back to 2 days
+    for term in cfg["hn_terms"]:
+        q = urllib.parse.quote(term)
+        url = (
+            "https://hn.algolia.com/api/v1/search"
+            f"?query={q}&tags=story&numericFilters=created_at_i>{window},points>10"
+            "&hitsPerPage=10"
+        )
+        try:
+            data = _get_json(url)
+        except Exception as e:
+            print(f"  [HN/{category}/{term}] skipped: {e}")
             continue
-        story_url = hit.get("url") or f"https://news.ycombinator.com/item?id={hit.get('objectID')}"
-        points = hit.get("points", 0) or 0
-        comments = hit.get("num_comments", 0) or 0
-        items.append({
-            "title": title,
-            "summary": _clean(hit.get("story_text"))[:280],
-            "url": story_url,
-            "source": "Hacker News",
-            "category": category,
-            "published": _iso_from_ts(hit.get("created_at_i")),
-            # points weigh more than comments for "how big is this"
-            "score": points + comments * 0.5,
-            "engagement": f"{points} points · {comments} comments",
-        })
+
+        for hit in data.get("hits", []):
+            title = _clean(hit.get("title"))
+            if not title:
+                continue
+            story_url = hit.get("url") or f"https://news.ycombinator.com/item?id={hit.get('objectID')}"
+            points = hit.get("points", 0) or 0
+            comments = hit.get("num_comments", 0) or 0
+            items.append({
+                "title": title,
+                "summary": _clean(hit.get("story_text"))[:280],
+                "url": story_url,
+                "source": "Hacker News",
+                "category": category,
+                "published": _iso_from_ts(hit.get("created_at_i")),
+                # points weigh more than comments for "how big is this"
+                "score": points + comments * 0.5,
+                "engagement": f"{points} points · {comments} comments",
+            })
     return items
 
 
@@ -258,24 +266,32 @@ def dedupe(items):
 
 
 def select(items):
-    """Balance across categories, then fill remaining slots by score."""
+    """Fill the feed while guaranteeing every interest is represented.
+
+    Each category's items are sorted by score, then we deal them out
+    round-robin (best of each category first, then second-best, ...). This
+    way the trim to TARGET_TOTAL never wipes out a whole interest just
+    because its items happened to score lower.
+    """
     by_cat = {}
     for it in items:
         by_cat.setdefault(it["category"], []).append(it)
+    for lst in by_cat.values():
+        lst.sort(key=lambda x: x["score"], reverse=True)
+
+    # cap each category so one busy interest can't crowd out the others
+    ranked = {cat: lst[:MAX_PER_CATEGORY] for cat, lst in by_cat.items()}
 
     chosen = []
-    for cat, lst in by_cat.items():
-        lst.sort(key=lambda x: x["score"], reverse=True)
-        chosen.extend(lst[:MAX_PER_CATEGORY])
+    round_i = 0
+    while len(chosen) < TARGET_TOTAL and any(len(l) > round_i for l in ranked.values()):
+        for cat in ranked:
+            if len(ranked[cat]) > round_i:
+                chosen.append(ranked[cat][round_i])
+                if len(chosen) >= TARGET_TOTAL:
+                    break
+        round_i += 1
 
-    # if we're short, backfill with the next-best leftovers
-    if len(chosen) < TARGET_TOTAL:
-        chosen_ids = {id(x) for x in chosen}
-        leftovers = [x for x in items if id(x) not in chosen_ids]
-        leftovers.sort(key=lambda x: x["score"], reverse=True)
-        chosen.extend(leftovers[: TARGET_TOTAL - len(chosen)])
-
-    chosen.sort(key=lambda x: x["score"], reverse=True)
     return chosen[:TARGET_TOTAL]
 
 
