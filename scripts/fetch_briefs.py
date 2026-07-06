@@ -114,12 +114,14 @@ def from_hacker_news(category, cfg, since_ts):
     items = []
     window = since_ts - 86400  # keep HN stories from the last ~2 days
     for term in cfg["hn_terms"]:
-        # Keep the query minimal — HN's Algolia endpoint returns HTTP 400 when
-        # sent numericFilters, so we filter by points/recency in Python below.
-        url = "https://hn.algolia.com/api/v1/search?" + urllib.parse.urlencode({
+        # Use search_by_date (newest first) so we get RECENT stories — plain
+        # /search returns all-time popular hits that fail the recency filter.
+        # numericFilters triggers HTTP 400 here, so filter points/recency in
+        # Python below.
+        url = "https://hn.algolia.com/api/v1/search_by_date?" + urllib.parse.urlencode({
             "query": term,
             "tags": "story",
-            "hitsPerPage": 20,
+            "hitsPerPage": 40,
         })
         try:
             data = _get_json(url)
