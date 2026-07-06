@@ -1,86 +1,265 @@
 {
-  "generated_at": "2026-07-06T06:00:00+00:00",
+  "generated_at": "2026-07-06T12:33:19.556930+00:00",
   "date_label": "Monday, 06 July 2026",
-  "sample": true,
   "interests": [
-    { "name": "AI", "emoji": "🤖" },
-    { "name": "Design", "emoji": "🎨" },
-    { "name": "Marketing", "emoji": "📈" },
-    { "name": "Tech", "emoji": "💻" }
+    {
+      "name": "AI",
+      "emoji": "🤖"
+    },
+    {
+      "name": "Design",
+      "emoji": "🎨"
+    },
+    {
+      "name": "Marketing",
+      "emoji": "📈"
+    },
+    {
+      "name": "Tech",
+      "emoji": "💻"
+    }
   ],
-  "count": 6,
+  "count": 20,
   "briefs": [
     {
-      "id": "sample000001",
-      "title": "Sample: A new open-source LLM claims GPT-class performance at a fraction of the cost",
-      "summary": "This is placeholder text so the site renders before your first crawl. Once the daily GitHub Action runs, real trending AI stories from Hacker News, Reddit and Google News appear here.",
-      "url": "https://news.ycombinator.com/",
-      "source": "Hacker News",
+      "title": "South Korea’s SK Hynix launching $28 billion US listing to ride global AI wave",
+      "summary": "South Korea’s SK Hynix launching $28 billion US listing to ride global AI wave The Mighty 790 KFGO",
+      "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxOTFVfenJKTFc5Z0dRN2N2YUNENHBkOURXVGhDSVpqU1JoTEo1a3hXdFB6S0dYUXQwYjdNMl85eEc5Q3JaTFBuUzc4OUJxQl9xSDJqUDMza2d2d01ZLThvQmVNbVF6c1IxeXpnekdpZEJid1dVZ0c4Vy1pNURpak1SOHhiV19CcXgzWEVJMkJ3Vk91dEZBNno4cWMyVXE5TFdMYzdZZzlqdV8?oc=5",
+      "source": "News · The Mighty 790 KFGO",
       "category": "AI",
-      "published": "2026-07-06T05:10:00+00:00",
-      "score": 312.0,
-      "engagement": "312 points · 140 comments",
-      "domain": "news.ycombinator.com"
-    },
-    {
-      "id": "sample000002",
-      "title": "Sample: Popular design tool ships an AI layout assistant",
-      "summary": "Placeholder brief. Real Design stories will replace this after the crawler runs.",
-      "url": "https://www.reddit.com/r/Design/",
-      "source": "Reddit · r/Design",
-      "category": "Design",
-      "published": "2026-07-06T04:40:00+00:00",
-      "score": 88.0,
-      "engagement": "12,400 upvotes · 210 comments",
-      "domain": "reddit.com"
-    },
-    {
-      "id": "sample000003",
-      "title": "Sample: The marketing channel everyone is quietly moving budget into",
-      "summary": "Placeholder brief. Real Marketing stories will replace this after the crawler runs.",
-      "url": "https://www.reddit.com/r/marketing/",
-      "source": "Reddit · r/marketing",
-      "category": "Marketing",
-      "published": "2026-07-06T03:55:00+00:00",
-      "score": 64.0,
-      "engagement": "5,900 upvotes · 88 comments",
-      "domain": "reddit.com"
-    },
-    {
-      "id": "sample000004",
-      "title": "Sample: A well-known startup announces a surprise hardware launch",
-      "summary": "Placeholder brief. Real Tech stories will replace this after the crawler runs.",
-      "url": "https://news.google.com/",
-      "source": "News · The Verge",
-      "category": "Tech",
-      "published": "2026-07-06T05:30:00+00:00",
+      "published": "2026-07-06T05:25:28+00:00",
       "score": 8.0,
       "engagement": "Fresh coverage",
-      "domain": "google.com"
+      "id": "c879ea69494a",
+      "domain": "news.google.com"
     },
     {
-      "id": "sample000005",
-      "title": "Sample: Researchers publish a technique that speeds up model inference",
-      "summary": "Placeholder brief. Real AI stories will replace this after the crawler runs.",
-      "url": "https://news.ycombinator.com/",
-      "source": "Hacker News",
+      "title": "Koreas Air Force, SNU launch AI initiative to reshape aerospace warfare",
+      "summary": "Koreas Air Force, SNU launch AI initiative to reshape aerospace warfare Aju Press",
+      "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE0xY180a0YyOWljYnRDU3NXTmUyNEVGVmZ2THQ4UlVhSG12RGtoeXRYcTdQV3ZGR25GVV90R1JpVEVIdy1tMFkyMkxaMEoySjVCbmVMdXczT2hhWDTSAVdBVV95cUxNNXRBVWttdVNYMGN6SlIxUGtsRnVWLVdPakdoa3IwdTJ1QTNFM0pLTk1DeWFrZ1JlMVdBYUxjT2J0MWUtOXJoOVY0cHB3Q1hHOGQyM3pMOGs?oc=5",
+      "source": "News · Aju Press",
       "category": "AI",
-      "published": "2026-07-06T02:20:00+00:00",
-      "score": 156.0,
-      "engagement": "156 points · 47 comments",
-      "domain": "news.ycombinator.com"
+      "published": "2026-07-06T08:39:19+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "id": "c87e3d1c9e99",
+      "domain": "news.google.com"
     },
     {
-      "id": "sample000006",
-      "title": "Sample: A viral case study on a growth experiment that actually worked",
-      "summary": "Placeholder brief. Real Marketing stories will replace this after the crawler runs.",
-      "url": "https://www.reddit.com/r/Entrepreneur/",
-      "source": "Reddit · r/Entrepreneur",
+      "title": "AI favors gun control, legalisation of marijuana, and feminism, finds Oxford study",
+      "summary": "AI favors gun control, legalisation of marijuana, and feminism, finds Oxford study ThePrint",
+      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNcHdGN0V0MzNicm5uSy1mYXloaWJQSURiMmlBZXRteU9sNFEtVDVFcEZsX1VQUU9Gbk5JUHlqSGx0akoxOGtxbEU4U0NCMExfNDZWSkc4U0ItLUR4WXdkRVJxYmVtRFduOU8zWTZsRGVNRUVSVmlxcEVaeG00NFk1V0gxSVNWR29hVnozTVVDMzU0c0UtNThDNGRoaWJWNnpMODZMZmp6WkJ1ZnJ2by1vYnpPSldOd3U1ZU90bdIBvAFBVV95cUxNcHdGN0V0MzNicm5uSy1mYXloaWJQSURiMmlBZXRteU9sNFEtVDVFcEZsX1VQUU9Gbk5JUHlqSGx0akoxOGtxbEU4U0NCMExfNDZWSkc4U0ItLUR4WXdkRVJxYmVtRFduOU8zWTZsRGVNRUVSVmlxcEVaeG00NFk1V0gxSVNWR29hVnozTVVDMzU0c0UtNThDNGRoaWJWNnpMODZMZmp6WkJ1ZnJ2by1vYnpPSldOd3U1ZU90bQ?oc=5",
+      "source": "News · ThePrint",
+      "category": "AI",
+      "published": "2026-07-06T07:30:34+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "id": "0d40fed4d118",
+      "domain": "news.google.com"
+    },
+    {
+      "title": "Kenya joins global AI capacity building network to drive collaborative innovation",
+      "summary": "Kenya joins global AI capacity building network to drive collaborative innovation Tech Review Africa",
+      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNVlZ6Mk5oMkxaQ1AxREFycDNDZDE0Ry04NjI0OFBieWdnYWk1Wm8xcHd5SnBvVm9MS05ReGI3d0hKOGtfS2Z3OG9nalB5d1VYZHVvQjN5NWN3U2U2WjNIYlJOWXkwZFZTWG1hbWtEcnJFRm9vTkQwdERRVlNlbHVzNjlNYlB3WHlHRFhocmVQM1dwQnU2Skp6RzFNdU44XzJVTzJ5RnBjUHhnTk0xM3U4ZFNFeTFqTVA0WHpoTA?oc=5",
+      "source": "News · Tech Review Africa",
+      "category": "AI",
+      "published": "2026-07-06T12:09:58+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "id": "25f5a6b6682a",
+      "domain": "news.google.com"
+    },
+    {
+      "title": "National AI Directorate and Israeli High-Tech Industry Launch Joint Initiative to Shape Israel's AI Future",
+      "summary": "National AI Directorate and Israeli High-Tech Industry Launch Joint Initiative to Shape Israel's AI Future Gov.il",
+      "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTFBkTmVSa2tldWtIWGFvM0xJTkMyeWNIWjY0Wnh0OWtlUnhIUnFOVi1aa1h5U2tRXy1LLU5Gc1I5WDQyZGVDZ0pxMURVSFBrdmw2emZnaA?oc=5",
+      "source": "News · Gov.il",
+      "category": "AI",
+      "published": "2026-07-06T07:37:20+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "id": "43fe06ca71bd",
+      "domain": "news.google.com"
+    },
+    {
+      "title": "German chamber of commerce in Korea outlines plans to launch AI startup competition",
+      "summary": "German chamber of commerce in Korea outlines plans to launch AI startup competition The Korea Times",
+      "url": "https://news.google.com/rss/articles/CBMi5wFBVV95cUxNVkxiRVlwSUpFNl8zZ1JMSDRzT2g1TXJ3YnJsLW44a1hrSUJKbVg3RmxTeXJES1hhSFRGUksxcHJEY3lCWkZIYzhnWV9MRHA2TmpNbEVBN3BjRnEwN0w4RGFfdzYtN0Rtd2xWa1JsZ0pVa2l4Sk9kRklsbngxQ1dQc3ZWUC1SeHp2V3p1Y0tDOFQ4NFJld3VvckVCM0FqZm1KaG5tOXlYbmNzc2Zha24yUW9WQzhZaDRtSnVkMjBjUXlqaFp2cEFNR1JfQkxoY1VJVU5BUlhMaGM3dkRIRW95amRaZHZFZm_SAecBQVVfeXFMTVZMYkVZcElKRTZfM2dSTEg0c09oNU1yd2JybC1uOGtYa0lCSm1YN0ZsU3lyREtYYUhURlJLMXByRGN5QlpGSGM4Z1lfTERwNk5qTWxFQTdwY0ZxMDdMOERhX3c2LTdEbXdsVmtSbGdKVWtpeEpPZEZJbG54MUNXUHN2VlAtUnh6dld6dWNLQzhUODRSZXd1b3JFQjNBamZtSmhubTl5WG5jc3NmYWtuMlFvVkM4WWg0bUp1ZDIwY1F5amhadnBBTUdSX0JMaGNVSVVOQVJYTGhjN3ZESEVveWpkWmR2RWZv?oc=5",
+      "source": "News · The Korea Times",
+      "category": "AI",
+      "published": "2026-07-06T05:23:00+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "id": "2d75b5c24ab1",
+      "domain": "news.google.com"
+    },
+    {
+      "title": "LTM brings AI-led cybersecurity risk assessment platform for enterprises",
+      "summary": "LTM brings AI-led cybersecurity risk assessment platform for enterprises Techcircle",
+      "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxQRnNHTUxqcFJKVzlrTHY2aS1yNk5FUnM3NXpUQmN1enNaaUg2M005N0VlQ2JwTEVwZlEyWEU5TS1HT1JTVTd3RFc1b3hLVURwbW1EeVZGWTBscVVMY24zUDNvbGtQcFNyZmlDc3FCYkhCTWNOU2VjNWtyX0ZPbV9Cem1EcDhZMktDRFBnZmxzTU41dUhGd0VkOFE0UGpXeU9waXB4alpNeno3UDVldlg2bg?oc=5",
+      "source": "News · Techcircle",
+      "category": "AI",
+      "published": "2026-07-06T12:29:55+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "id": "432a7c032d88",
+      "domain": "news.google.com"
+    },
+    {
+      "title": "UX Roundup: UX Benchmark | Impact of AI Mentions | Character Design Workflow | AI Maturity | UX Hero: Stu Card | Microsoft FDE",
+      "summary": "UX Roundup: UX Benchmark | Impact of AI Mentions | Character Design Workflow | AI Maturity | UX Hero: Stu Card | Microsoft FDE Jakob Nielsen on UX",
+      "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE9OSWpVNUxCY2REZW5SNWZfUEJBYlNNWHFLVmxzWno1TW1fbV9LS1pvbG56bGRDTWFLWVV2ZTJ4ZEhDalVpUHNnZHlXLVFVUkRmWDZxRzNETE4xWUEwMTVCamxUOVVCdHk3c2c?oc=5",
+      "source": "News · Jakob Nielsen on UX",
+      "category": "Design",
+      "published": "2026-07-06T11:21:14+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "id": "8690b94d91bc",
+      "domain": "news.google.com"
+    },
+    {
+      "title": "Kim Kardashian and the Property Brothers use this brilliant home design tool to avoid thousands in renovation mistakes",
+      "summary": "Kim Kardashian and the Property Brothers use this brilliant home design tool to avoid thousands in renovation mistakes MarketWatch",
+      "url": "https://news.google.com/rss/articles/CBMi8wFBVV95cUxQakxMYmRtSzZjTDFJRU91Z0JJLWN3a2ZTc21wTENnbVZuWG1lUlUyLWZmSnZ2TlRsMlpDSS1NSGkxX3BkVUtqVl9XSnFkUHpOUDVab0dPYzFtOTZ6TmoydFRtdkNjUTlBLUhsVlhzTmh6OVdnUFhSdkhxWVM5YmhDT1lCTUhkSk16ODNsYVk0SkczQ1JMT21PcU5KZ2FCRXR1a0tJaEpsNi1mT0sxbS0zbE9WZWFtY1libWFSX0NGa08wUlFPdlJxVTR1TUE5OGZyVTFyU204OGNnVkROV1RnQ0xRSkI1X0lIM3RkaXFoM1lOZmc?oc=5",
+      "source": "News · MarketWatch",
+      "category": "Design",
+      "published": "2026-07-06T09:04:00+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "id": "5099aa9c26dc",
+      "domain": "news.google.com"
+    },
+    {
+      "title": "Best AI Design Tools in 2026: Tested and Ranked by Use Case",
+      "summary": "Best AI Design Tools in 2026: Tested and Ranked by Use Case Memeburn",
+      "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE9jczdCd1ItSXllS3lhYjM0ejFOTEcwLUhRX1BHVURDd1NZMEE4QnpkeXBMUm1QUExKcy1FeDItcWFUd2VkS09JblFjWVhMUGYtS25STg?oc=5",
+      "source": "News · Memeburn",
+      "category": "Design",
+      "published": "2026-07-06T04:01:57+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "id": "d2cdcd1ffb7d",
+      "domain": "news.google.com"
+    },
+    {
+      "title": "Frontier Technology, Built for the Underserved",
+      "summary": "Frontier Technology, Built for the Underserved dscene magazine",
+      "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE9jX3Y4Q0F5SWc3d3dtOTV2enFKZURFaGkteDE3OWliMzUyV201b2kwMTV4MDFYZ3BQN21Db0hxYnk2TldYYWpQM2k5Z1pLdXdlU3dSUUs1QnlOcER1VEE?oc=5",
+      "source": "News · dscene magazine",
+      "category": "Design",
+      "published": "2026-07-06T08:12:50+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "id": "56e1c13e8eef",
+      "domain": "news.google.com"
+    },
+    {
+      "title": "AI-driven smile design: Redefining esthetic treatment planning",
+      "summary": "AI-driven smile design: Redefining esthetic treatment planning Oral Health Group",
+      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQOWpOc2pWNHdfOXpBMUdQTGRZcnZ1SzNCc25za05pTERUR2FLdXBEYlJ6WXN1UG1Kdi1pN0NlZlppS2E4Umx4XzY0dV9qZ3dtZkwwa3ZKemotZFNvQk1veG1kMTZYRUJkVXZtQy1UeE9MRjBCanIyQmszVVk0QnJTYXE5NFhIX2ZGanptYkk4cU1FT2xJcUhmQW82Y1RIR28yME1PSlFR?oc=5",
+      "source": "News · Oral Health Group",
+      "category": "Design",
+      "published": "2026-07-06T10:23:09+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "id": "b2beea55267a",
+      "domain": "news.google.com"
+    },
+    {
+      "title": "Italy launches design tax credit - FashionNetwork",
+      "summary": "Italy launches design tax credit FashionNetwork - The World's Fashion Business News",
+      "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNNm1SVzFGZnR0allWQmJKVjZpSjVEZm5LSkM1T0JaTTJjcmhCSUk3WV9sMlVnc0h2UWpGbXZ2ejU0UTVtYnRiMWZ3a1hjNVUwRXl0S01OXzVLeVFqeW56Zm1XeEcyUVlkZ3dSc3FaQ1owWmJIYzFpczQ1RjVfTkRUdjU5YnlTbFU?oc=5",
+      "source": "News · The World's Fashion Business News",
+      "category": "Design",
+      "published": "2026-07-06T10:24:34+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "id": "7dfc81eda666",
+      "domain": "news.google.com"
+    },
+    {
+      "title": "Complex Geometries Simplified: Xiamen Goldcattle's Professional 5-Axis CNC Machining Service at IMTS",
+      "summary": "Complex Geometries Simplified: Xiamen Goldcattle's Professional 5-Axis CNC Machining Service at IMTS EIN News",
+      "url": "https://news.google.com/rss/articles/CBMi3wFBVV95cUxNLUpPalRmVEhUS0U1cGNkSGg5dnpMQmh3RUdaVk9sSDMyd2dSX0NCZW52bE1GdHRaaWU4TkN0ZFhXalNFWjhXRWE4Tklzdnh0b2ZUc0NJWVlWMk4xWjliR0ZlMktrcGZTd2xjdmVldlVIUmJiUkZpMVNCY3FsTlhDeEtpckNvTFVLVWVoaUJUdFNuRWxSTzdDclRmZ1BpT0lCcXhCZHphWEV4N1ZVZ0RoM1IyMTQ1Y1VoMGNSVG1FdUNPdGdQejRxZ2VTYi1vdVMteFRDbU9NdXJSejFUb3Jz0gHfAUFVX3lxTE0tSk9qVGZUSFRLRTVwY2RIaDl2ekxCaHdFR1pWT2xIMzJ3Z1JfQ0JlbnZsTUZ0dFppZThOQ3RkWFdqU0VaOFdFYThOSXN2eHRvZlRzQ0lZWVYyTjFaOWJHRmUyS2twZlN3bGN2ZWV2VUhSYmJSRmkxU0JjcWxOWEN4S2lyQ29MVUtVZWhpQlR0U25FbFJPN0NyVGZnUGlPSUJxeEJkemFYRXg3VlVnRGgzUjIxNDVjVWgwY1JUbUV1Q090Z1B6NHFnZVNiLW91Uy14VENtT011clJ6MVRvcnM?oc=5",
+      "source": "News · EIN News",
+      "category": "Design",
+      "published": "2026-07-06T07:57:24+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "id": "41e7755383fe",
+      "domain": "news.google.com"
+    },
+    {
+      "title": "The Hidden Risks of Letting AI Run Your Marketing Unsupervised",
+      "summary": "The Hidden Risks of Letting AI Run Your Marketing Unsupervised Woodlands Online",
+      "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE5lbmpTZjNGMXY1OUZCSWJlSVhuSXNMa3pqeVlfSmczSGdFeUFjN2c2d3l6aVpUc2xCbWl4aE9scGV2eVY4RjFDOThWUjJjMUFFYm1RZEFHbVZtcnJpdUFEM0Z5djJjMUI0Wjl3?oc=5",
+      "source": "News · Woodlands Online",
       "category": "Marketing",
-      "published": "2026-07-06T01:15:00+00:00",
-      "score": 52.0,
-      "engagement": "4,100 upvotes · 63 comments",
-      "domain": "reddit.com"
+      "published": "2026-07-06T05:15:27+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "id": "fd4d95a468a5",
+      "domain": "news.google.com"
+    },
+    {
+      "title": "8 key agency and marketing job moves to know about",
+      "summary": "8 key agency and marketing job moves to know about Ad Age",
+      "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxPcjZMVnRIbHF3QW9US3RxSDhUWVF6cWpXNDNKUElaVjhOOG04NVNrR3l0WlJwNnVTZ3ZRWG1JaGtUM05kaXhVMnNtdmZTWFQxbDNBSnJSNjF0b21lMlphOHdvQ3JmdlIxYXZxZ1d1RWZQWno0UTBQQUR0V0dlZDRmbW9ZR3BXQkZnTG5JaWpFUlM5NjN3T0ZQV1Z3?oc=5",
+      "source": "News · Ad Age",
+      "category": "Marketing",
+      "published": "2026-07-06T09:00:00+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "id": "f558f3b9a888",
+      "domain": "news.google.com"
+    },
+    {
+      "title": "AI in Advertising Market Set to Skyrocket: From $11.17 Billion in 2025 to $36.34 Billion by 2030",
+      "summary": "AI in Advertising Market Set to Skyrocket: From $11.17 Billion in 2025 to $36.34 Billion by 2030 GlobeNewswire",
+      "url": "https://news.google.com/rss/articles/CBMi_gFBVV95cUxONE9kb1liYjdkZVpPVlpqdkNzNC1UcVdONW1CLTRmQ29pV1EyYTl6QW90Y2djbExmSnNqR0FwWXk5SENVc21TamVkck85NFFsdlpsYUExdUg3RnFCZHoyQjR0dEpvYm5TdWxkSmNUYWxqejBXQW1WNkZqaGxnTzVMU2tVUXdFR1BDYkNOQVZ5aWZjQnFxUTRha3llT09YTmlWdnNrXzcyTkk3MW95SWxTaHZLLU5rMnBTdzdQQmpINUlCLTlUbk05RWE0bWlrdERrRHRMZG1LR0RXdDlyODR2R0lscm9fRTR0Y0g1TFZVcGhwQjk2ZGNROHM3Q09udw?oc=5",
+      "source": "News · GlobeNewswire",
+      "category": "Marketing",
+      "published": "2026-07-06T11:37:46+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "id": "6dd98d36076b",
+      "domain": "news.google.com"
+    },
+    {
+      "title": "5 Things the 2026 Global Connected Packaging Survey Tells Us About Where Marketing Is Going",
+      "summary": "5 Things the 2026 Global Connected Packaging Survey Tells Us About Where Marketing Is Going Little Black Book | LBBOnline",
+      "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxQdXZ6Tk5nQUNHdlZ3VkYtV291UUJVMHYtQUlJbEJLX3lYN2RFRHFpekUyelc4VjBrdzlEbFVOdmNzTVh1SDAyQmNOWTlEUGRfaXNOQkRrRmtUTF9MVmdBS2hLT0JhajZaMWNSRGJVWFJnTnpsMXlVZDltTTQ1WWdOaU1ub3haeDd1MDhQblVFX3RmY2pRZWF4aEd1UkJrcW52Mk5OSGhJSUhmRmVXYmNtempaTWdDcVRDa2c?oc=5",
+      "source": "News · Little Black Book | LBBOnline",
+      "category": "Marketing",
+      "published": "2026-07-06T10:52:31+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "id": "1e541f0a406b",
+      "domain": "news.google.com"
+    },
+    {
+      "title": "Why This Summer’s Fashion Campaigns Are All-In on Retro Escapism",
+      "summary": "Why This Summer’s Fashion Campaigns Are All-In on Retro Escapism The Business of Fashion",
+      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNXzhvVzZ2TW5PeUJ6eW5ic0ttRlJKYlpMZlZwZnY5WmlNR09RZVBiV1lyLXlHdFBZNFZrekJGOVhZQ0hYeUtIN3dpZFNncDNVYzB3M3d5VHBrWXdiSml0U3B0TkV2RGNLX2dzZjZva2s3dEZvZnpxT0pXaS1jUUJPS0hTY2V0ZG42ZWpTeDF5c0pFSWZyVVJXSTlUVElucHlFbVBDVEQ3TVRscklCNVFzNjlZanlkTC1lWS1Fbw?oc=5",
+      "source": "News · The Business of Fashion",
+      "category": "Marketing",
+      "published": "2026-07-06T04:30:00+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "id": "c7f278d5cd44",
+      "domain": "news.google.com"
+    },
+    {
+      "title": "Dove expands marketing through Elle series",
+      "summary": "Dove expands marketing through Elle series marketingreport.one",
+      "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxNS0swdkN6T2gxdVRkRlhDVGZRVGR1eTNLT0hjNVZuWEVPVy1PU1NMVy1sd3lCeGRTQ3RrdkhRcG5mb19kNzhXTmppdHNHZVJSNHVKOUpNLU1MeV8zSFFIaWxDNzBYSjczVHFxMVNYZGtaSk43S3VoUTFEcnZ4c2k0SXE0WnRHREEydDRfQg?oc=5",
+      "source": "News · marketingreport.one",
+      "category": "Marketing",
+      "published": "2026-07-06T06:37:33+00:00",
+      "score": 8.0,
+      "engagement": "Fresh coverage",
+      "id": "0f4a1c91ceff",
+      "domain": "news.google.com"
     }
   ]
 }
