@@ -113,12 +113,14 @@ def from_hacker_news(category, cfg, since_ts):
     items = []
     window = since_ts - 86400  # widen HN look-back to 2 days
     for term in cfg["hn_terms"]:
-        q = urllib.parse.quote(term)
-        url = (
-            "https://hn.algolia.com/api/v1/search"
-            f"?query={q}&tags=story&numericFilters=created_at_i>{window},points>10"
-            "&hitsPerPage=10"
-        )
+        # urlencode the whole query string so ">" and "," in numericFilters
+        # are escaped — raw ">" makes Algolia return HTTP 400.
+        url = "https://hn.algolia.com/api/v1/search?" + urllib.parse.urlencode({
+            "query": term,
+            "tags": "story",
+            "numericFilters": f"created_at_i>{window},points>10",
+            "hitsPerPage": 10,
+        })
         try:
             data = _get_json(url)
         except Exception as e:
@@ -250,19 +252,43 @@ def _norm_title(title):
     return re.sub(r"[^a-z0-9]+", " ", title.lower()).strip()
 
 
+_STOPWORDS = {"the", "a", "an", "to", "of", "in", "on", "for", "and", "with",
+              "is", "as", "at", "by", "its", "this", "that", "new", "how"}
+
+
+def _token_set(title):
+    words = [w for w in _norm_title(title).split() if w not in _STOPWORDS and len(w) > 2]
+    return set(words)
+
+
 def dedupe(items):
-    """Drop near-duplicate stories, keeping the highest-scored copy."""
-    seen = {}
-    for it in items:
-        key = _norm_title(it["title"])[:60]
-        if not key:
+    """Drop duplicate and near-duplicate stories, keeping the best-scored copy.
+
+    Two headlines are treated as the same story when their significant-word
+    sets overlap heavily (Jaccard >= 0.6) — this catches rewrites like
+    "X launching Y" vs "X to launch Y" that exact-prefix matching misses.
+    """
+    kept = []
+    for it in sorted(items, key=lambda x: x["score"], reverse=True):
+        toks = _token_set(it["title"])
+        if not toks:
             continue
-        if key not in seen or it["score"] > seen[key]["score"]:
-            # merge engagement note if the same story came from two places
-            if key in seen:
-                it["also_seen"] = seen[key]["source"]
-            seen[key] = it
-    return list(seen.values())
+        dup = False
+        for k in kept:
+            inter = len(toks & k["_toks"])
+            union = len(toks | k["_toks"]) or 1
+            smaller = min(len(toks), len(k["_toks"])) or 1
+            # heavy overlap, OR one headline is largely contained in the other
+            # (catches "X launching Y" vs "X to launch Y, extra words")
+            if inter / union >= 0.6 or (inter >= 4 and inter / smaller >= 0.8):
+                dup = True
+                break
+        if not dup:
+            it["_toks"] = toks
+            kept.append(it)
+    for it in kept:
+        it.pop("_toks", None)
+    return kept
 
 
 def select(items):
