@@ -2,13 +2,16 @@
 """
 On It — daily brief crawler.
 
-Source: Google Trends "daily trending searches" (free, no API key) — i.e.
-what people are actually searching for right now. Each trend comes with the
-top news headline, a snippet, and an approximate search volume, which we turn
-into a readable, rankable brief.
+Goal: the crazy-interesting, world-changing things that are trending right now —
+what people are actually searching for and reading today.
 
-Only the Python standard library is used, so the GitHub Action needs no
-`pip install` step for this script.
+Free, no-API-key sources (both work from GitHub Actions):
+  1. Wikipedia most-viewed articles  -> what the world is looking up today,
+     with real view counts, enriched with each topic's summary.
+  2. Google News "Top Stories" RSS   -> the biggest headlines of the day.
+
+Results are interleaved so you get both "what people are searching" and the
+"big story" headlines. Standard library only — no pip install for this script.
 """
 
 import json
@@ -18,26 +21,37 @@ import hashlib
 import urllib.request
 import urllib.parse
 import xml.etree.ElementTree as ET
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
-# Which Google Trends regions to pull. US surfaces the big global / world-
-# changing stories; IN adds what's blowing up locally. Merged and de-duped.
-GEOS = ["US", "IN"]
+# Google News regions to pull top stories from.
+NEWS_GEOS = [("US", "en-US", "US:en"), ("IN", "en-IN", "IN:en")]
 
 TARGET_TOTAL = 20
+WIKI_MAX = 13
+NEWS_MAX = 12
 
-# A browser-like User-Agent — Google serves cleaner responses to these.
 USER_AGENT = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
               "(KHTML, like Gecko) Chrome/125.0 Safari/537.36")
 
+# Wikipedia pages that aren't real "topics".
+WIKI_SKIP = {"Main_Page", "-", "Special:Search", "Wikipedia:Featured_pictures"}
+
 OUTPUT = Path(__file__).resolve().parent.parent / "data" / "briefs.json"
 
+
+# ---------------------------------------------------------------------------
+# HTTP + text helpers
+# ---------------------------------------------------------------------------
 
 def _get(url, timeout=25):
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "*/*"})
     with urllib.request.urlopen(req, timeout=timeout) as resp:
         return resp.read().decode("utf-8", errors="replace")
+
+
+def _get_json(url, timeout=25):
+    return json.loads(_get(url, timeout=timeout))
 
 
 def _clean(text):
@@ -55,94 +69,113 @@ def _domain(url):
         return ""
 
 
-def _traffic_to_int(s):
-    """'200,000+' -> 200000 ; '2M+' -> 2000000."""
-    if not s:
-        return 0
-    s = s.strip().upper().replace(",", "").replace("+", "")
-    mult = 1
-    if s.endswith("K"):
-        mult, s = 1_000, s[:-1]
-    elif s.endswith("M"):
-        mult, s = 1_000_000, s[:-1]
-    try:
-        return int(float(s) * mult)
-    except Exception:
-        return 0
+def _human(n):
+    if n >= 1_000_000:
+        return f"{n/1_000_000:.1f}M"
+    if n >= 1_000:
+        return f"{n/1_000:.0f}K"
+    return str(n)
 
 
-def _locals(elem, localname):
-    """All descendants whose tag local-name matches, ignoring XML namespace."""
-    return [e for e in elem.iter() if e.tag.rsplit("}", 1)[-1] == localname]
+# ---------------------------------------------------------------------------
+# Source 1: Wikipedia most-viewed (what people are searching / looking up)
+# ---------------------------------------------------------------------------
 
-
-def _local_text(elem, localname):
-    for e in _locals(elem, localname):
-        if e.text and e.text.strip():
-            return _clean(e.text)
-    return ""
-
-
-def from_google_trends(geo):
-    """Trending searches for a region.
-
-    Google has shipped several RSS shapes/namespaces for trends, so we try the
-    current "Trending Now" endpoint first, fall back to the older daily feed,
-    and parse fields by local tag name (namespace-agnostic) to survive changes.
-    """
+def from_wikipedia():
     items = []
-    endpoints = [
-        f"https://trends.google.com/trending/rss?geo={geo}",
-        f"https://trends.google.com/trends/trendingsearches/daily/rss?geo={geo}",
-    ]
-    root = None
-    for url in endpoints:
-        try:
-            candidate = ET.fromstring(_get(url))
-            if list(candidate.iter("item")):
-                root = candidate
-                break
-        except Exception as e:
-            print(f"  [Trends/{geo}] {url.split('?')[0]} failed: {e}")
-    if root is None:
-        print(f"  [Trends/{geo}] no items from any endpoint")
+    # yesterday (UTC) — today's ranking isn't finalised yet
+    day = datetime.now(timezone.utc) - timedelta(days=1)
+    url = ("https://wikimedia.org/api/rest_v1/metrics/pageviews/top/"
+           f"en.wikipedia/all-access/{day:%Y/%m/%d}")
+    try:
+        data = _get_json(url)
+        articles = data["items"][0]["articles"]
+    except Exception as e:
+        print(f"  [Wikipedia] skipped: {e}")
         return items
 
-    for it in root.iter("item"):
-        term = _local_text(it, "title")
-        if not term:
+    for a in articles:
+        name = a.get("article", "")
+        if not name or name in WIKI_SKIP or ":" in name:
             continue
-        traffic_raw = _local_text(it, "approx_traffic")
+        title = name.replace("_", " ")
+        views = int(a.get("views", 0))
+        page_url = "https://en.wikipedia.org/wiki/" + urllib.parse.quote(name)
 
-        headline = _local_text(it, "news_item_title")
-        snippet = _local_text(it, "news_item_snippet")
-        links = _locals(it, "news_item_url")
-        link = next((e.text.strip() for e in links if e.text and e.text.strip()), "")
-        src = _local_text(it, "news_item_source")
-        picture = _local_text(it, "news_item_picture") or _local_text(it, "picture")
-
-        title = headline or term
-        if not link:
-            link = "https://www.google.com/search?q=" + urllib.parse.quote(term)
-
+        summary, thumb = _wiki_summary(name)
         items.append({
             "title": title,
-            "summary": snippet or f"“{term}” is trending in search right now.",
-            "url": link,
-            "trend": term,
-            "source": src or "Google Trends",
-            "traffic": traffic_raw,
-            "engagement": f"{traffic_raw} searches" if traffic_raw else "Trending in search",
-            "geo": geo,
-            "picture": picture,
+            "summary": summary or f"{views:,} people looked this up today — it's trending on Wikipedia.",
+            "url": page_url,
+            "trend": title,
+            "source": "Wikipedia · most viewed",
+            "badge": f"{_human(views)} views",
+            "engagement": f"{views:,} views today",
+            "picture": thumb,
             "published": datetime.now(timezone.utc).isoformat(),
-            "score": _traffic_to_int(traffic_raw) or 1,
+            "score": views,
+            "kind": "search",
         })
+        if len(items) >= WIKI_MAX:
+            break
+    return items
+
+
+def _wiki_summary(name):
+    """Short human summary + thumbnail for a Wikipedia article (best-effort)."""
+    try:
+        url = "https://en.wikipedia.org/api/rest_v1/page/summary/" + urllib.parse.quote(name)
+        d = _get_json(url, timeout=12)
+        extract = _clean(d.get("extract", ""))[:280]
+        thumb = (d.get("thumbnail") or {}).get("source", "")
+        return extract, thumb
+    except Exception:
+        return "", ""
+
+
+# ---------------------------------------------------------------------------
+# Source 2: Google News top stories (the big headlines of the day)
+# ---------------------------------------------------------------------------
+
+def from_google_news_top(geo, hl, ceid):
+    items = []
+    url = f"https://news.google.com/rss?hl={hl}&gl={geo}&ceid={ceid}"
+    try:
+        root = ET.fromstring(_get(url))
+    except Exception as e:
+        print(f"  [News/{geo}] skipped: {e}")
+        return items
+
+    for i, it in enumerate(root.iter("item")):
+        title = _clean(it.findtext("title"))
+        if not title:
+            continue
+        src = ""
+        if " - " in title:
+            title, src = title.rsplit(" - ", 1)
+        link = (it.findtext("link") or "").strip()
+        desc = _clean(it.findtext("description"))
+        items.append({
+            "title": title,
+            "summary": desc[:280] or f"{title} — a top story today.",
+            "url": link,
+            "trend": "",
+            "source": f"Top story · {src}" if src else "Top story",
+            "badge": "Top story",
+            "engagement": src or "Top story",
+            "picture": "",
+            "published": datetime.now(timezone.utc).isoformat(),
+            # high, order-preserving score so the freshest top stories lead
+            "score": 5_000_000 - i * 1000,
+            "kind": "news",
+        })
+        if len(items) >= NEWS_MAX:
+            break
     return items
 
 
 # ---------------------------------------------------------------------------
-# De-dup + finalize
+# De-dup + merge
 # ---------------------------------------------------------------------------
 
 _STOP = {"the", "a", "an", "to", "of", "in", "on", "for", "and", "with",
@@ -176,33 +209,51 @@ def dedupe(items):
     return kept
 
 
+def interleave(a, b, n):
+    """Alternate items from two lists so neither source dominates the feed."""
+    out, i, j = [], 0, 0
+    while len(out) < n and (i < len(a) or j < len(b)):
+        if i < len(a):
+            out.append(a[i]); i += 1
+        if j < len(b) and len(out) < n:
+            out.append(b[j]); j += 1
+    return out
+
+
 def finalize(items):
-    out = []
     for it in items:
         it["id"] = hashlib.sha1((it["url"] or it["title"]).encode("utf-8")).hexdigest()[:12]
         it["domain"] = _domain(it["url"])
-        out.append(it)
-    return out
+    return items
 
 
 def main():
     now = datetime.now(timezone.utc)
 
-    raw = []
-    for geo in GEOS:
-        print(f"[{geo}] gathering trending searches…")
-        raw += from_google_trends(geo)
+    print("Gathering what people are searching (Wikipedia)…")
+    wiki = from_wikipedia()
+    print(f"  {len(wiki)} trending topics.")
 
-    print(f"Collected {len(raw)} raw trends.")
-    deduped = dedupe(raw)
-    deduped.sort(key=lambda x: x["score"], reverse=True)
-    briefs = finalize(deduped[:TARGET_TOTAL])
+    print("Gathering top stories (Google News)…")
+    news = []
+    for geo, hl, ceid in NEWS_GEOS:
+        news += from_google_news_top(geo, hl, ceid)
+    print(f"  {len(news)} top stories.")
+
+    wiki = dedupe(wiki)
+    news = dedupe(news)
+    # dedupe news against wiki topics too
+    merged = dedupe(wiki + news)
+    wiki_only = [x for x in merged if x.get("kind") == "search"]
+    news_only = [x for x in merged if x.get("kind") == "news"]
+
+    briefs = finalize(interleave(wiki_only, news_only, TARGET_TOTAL))
     print(f"{len(briefs)} briefs selected.")
 
     payload = {
         "generated_at": now.isoformat(),
         "date_label": now.strftime("%A, %d %B %Y"),
-        "source_label": "Trending on search",
+        "source_label": "Trending — what the world is searching",
         "count": len(briefs),
         "briefs": briefs,
     }

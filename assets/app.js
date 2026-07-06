@@ -90,7 +90,7 @@
     node.innerHTML = `
       <div class="card-top">
         <span class="rank">#${i + 1}</span>
-        ${b.traffic ? `<span class="cat-tag">🔥 ${escapeHtml(b.traffic)} searches</span>` : ""}
+        ${b.badge ? `<span class="cat-tag">🔥 ${escapeHtml(b.badge)}</span>` : ""}
       </div>
       <h2>${escapeHtml(b.title)}</h2>
       <p class="summary">${escapeHtml(b.summary || "")}</p>
