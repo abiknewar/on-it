@@ -1,69 +1,7 @@
 {
-  "generated_at": "2026-07-06T06:00:00+00:00",
+  "generated_at": "2026-07-06T13:01:28.264084+00:00",
   "date_label": "Monday, 06 July 2026",
   "source_label": "Trending on search",
-  "sample": true,
-  "count": 4,
-  "briefs": [
-    {
-      "title": "Sample: A breakthrough announcement everyone is searching for today",
-      "summary": "Placeholder brief. Once the daily GitHub Action runs, real Google Trends searches — the crazy, world-changing things people are actually googling — appear here.",
-      "url": "https://www.google.com/search?q=trending",
-      "trend": "breakthrough 2026",
-      "source": "Sample Source",
-      "traffic": "500,000+",
-      "engagement": "500,000+ searches",
-      "geo": "US",
-      "picture": "",
-      "published": "2026-07-06T05:10:00+00:00",
-      "score": 500000,
-      "id": "sample000001",
-      "domain": "google.com"
-    },
-    {
-      "title": "Sample: The viral moment blowing up across the internet",
-      "summary": "Placeholder brief. Real trending searches will replace this after the crawler runs.",
-      "url": "https://www.google.com/search?q=viral",
-      "trend": "viral moment",
-      "source": "Sample Source",
-      "traffic": "200,000+",
-      "engagement": "200,000+ searches",
-      "geo": "US",
-      "picture": "",
-      "published": "2026-07-06T04:40:00+00:00",
-      "score": 200000,
-      "id": "sample000002",
-      "domain": "google.com"
-    },
-    {
-      "title": "Sample: A world event millions are following right now",
-      "summary": "Placeholder brief. Real trending searches will replace this after the crawler runs.",
-      "url": "https://www.google.com/search?q=world+event",
-      "trend": "world event",
-      "source": "Sample Source",
-      "traffic": "100,000+",
-      "engagement": "100,000+ searches",
-      "geo": "IN",
-      "picture": "",
-      "published": "2026-07-06T03:55:00+00:00",
-      "score": 100000,
-      "id": "sample000003",
-      "domain": "google.com"
-    },
-    {
-      "title": "Sample: The new thing in tech everyone suddenly wants",
-      "summary": "Placeholder brief. Real trending searches will replace this after the crawler runs.",
-      "url": "https://www.google.com/search?q=tech",
-      "trend": "new tech",
-      "source": "Sample Source",
-      "traffic": "50,000+",
-      "engagement": "50,000+ searches",
-      "geo": "US",
-      "picture": "",
-      "published": "2026-07-06T02:20:00+00:00",
-      "score": 50000,
-      "id": "sample000004",
-      "domain": "google.com"
-    }
-  ]
+  "count": 0,
+  "briefs": []
 }
