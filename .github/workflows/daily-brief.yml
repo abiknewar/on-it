@@ -12,6 +12,7 @@ permissions:
   contents: write            # to commit the refreshed briefs.json
   pages: write               # to deploy to GitHub Pages
   id-token: write            # required by deploy-pages
+  models: read               # to call GitHub Models (free AI summaries)
 
 # never run two deploys at once
 concurrency:
@@ -32,6 +33,12 @@ jobs:
       - name: Gather trending briefs
         if: github.event_name != 'push'
         run: python scripts/fetch_briefs.py
+
+      - name: Summarize why things are trending (AI)
+        if: github.event_name != 'push'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/summarize.py
 
       - name: Generate narration audio (clean neural voice)
         if: github.event_name != 'push'

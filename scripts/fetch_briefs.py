@@ -220,10 +220,62 @@ def interleave(a, b, n):
     return out
 
 
+def recent_context(query, limit=4):
+    """Recent news (last few days) about a topic — the 'why is this trending'.
+
+    Returned as a list of {title, snippet, source} the summariser turns into a
+    paragraph. Also used as a no-AI fallback description.
+    """
+    if not query:
+        return []
+    q = urllib.parse.quote(f"{query} when:4d")
+    url = f"https://news.google.com/rss/search?q={q}&hl=en-US&gl=US&ceid=US:en"
+    out = []
+    try:
+        root = ET.fromstring(_get(url))
+    except Exception:
+        return out
+    for it in root.iter("item"):
+        t = _clean(it.findtext("title"))
+        if not t:
+            continue
+        src = ""
+        if " - " in t:
+            t, src = t.rsplit(" - ", 1)
+        out.append({
+            "title": t,
+            "snippet": _clean(it.findtext("description"))[:300],
+            "source": src,
+        })
+        if len(out) >= limit:
+            break
+    return out
+
+
+def fallback_summary(ctx):
+    """Readable paragraph from recent headlines when the AI isn't available."""
+    if not ctx:
+        return ""
+    bits = []
+    for c in ctx[:3]:
+        s = c["snippet"] if len(c["snippet"]) > len(c["title"]) else c["title"]
+        if c["source"]:
+            s = f"{s} ({c['source']})"
+        bits.append(s)
+    return " ".join(bits)[:700]
+
+
 def finalize(items):
     for it in items:
         it["id"] = hashlib.sha1((it["url"] or it["title"]).encode("utf-8")).hexdigest()[:12]
         it["domain"] = _domain(it["url"])
+        # gather the recent story behind this trend
+        q = it.get("trend") or it["title"]
+        ctx = recent_context(q)
+        it["context"] = ctx
+        fb = fallback_summary(ctx)
+        if fb:
+            it["summary"] = fb  # AI step (summarize.py) will refine this
     return items
 
 
