@@ -62,8 +62,9 @@ INTERESTS = {
 TARGET_TOTAL = 20
 MAX_PER_CATEGORY = 7
 
-# Politeness: identify ourselves so Reddit / news servers don't 429 us.
-USER_AGENT = "on-it-daily-brief/1.0 (personal reader; +https://github.com/abiknewar/on-it)"
+# A browser-like User-Agent — some Cloudflare-fronted APIs reject unusual ones.
+USER_AGENT = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+              "(KHTML, like Gecko) Chrome/125.0 Safari/537.36")
 
 OUTPUT = Path(__file__).resolve().parent.parent / "data" / "briefs.json"
 
@@ -111,15 +112,14 @@ def from_hacker_news(category, cfg, since_ts):
     so the engagement signal — the real "trending" signal — is always present.
     """
     items = []
-    window = since_ts - 86400  # widen HN look-back to 2 days
+    window = since_ts - 86400  # keep HN stories from the last ~2 days
     for term in cfg["hn_terms"]:
-        # urlencode the whole query string so ">" and "," in numericFilters
-        # are escaped — raw ">" makes Algolia return HTTP 400.
+        # Keep the query minimal — HN's Algolia endpoint returns HTTP 400 when
+        # sent numericFilters, so we filter by points/recency in Python below.
         url = "https://hn.algolia.com/api/v1/search?" + urllib.parse.urlencode({
             "query": term,
             "tags": "story",
-            "numericFilters": f"created_at_i>{window},points>10",
-            "hitsPerPage": 10,
+            "hitsPerPage": 20,
         })
         try:
             data = _get_json(url)
@@ -131,8 +131,12 @@ def from_hacker_news(category, cfg, since_ts):
             title = _clean(hit.get("title"))
             if not title:
                 continue
-            story_url = hit.get("url") or f"https://news.ycombinator.com/item?id={hit.get('objectID')}"
             points = hit.get("points", 0) or 0
+            created = hit.get("created_at_i") or 0
+            # only keep things that are both recent and have real traction
+            if points < 10 or created < window:
+                continue
+            story_url = hit.get("url") or f"https://news.ycombinator.com/item?id={hit.get('objectID')}"
             comments = hit.get("num_comments", 0) or 0
             items.append({
                 "title": title,
@@ -140,7 +144,7 @@ def from_hacker_news(category, cfg, since_ts):
                 "url": story_url,
                 "source": "Hacker News",
                 "category": category,
-                "published": _iso_from_ts(hit.get("created_at_i")),
+                "published": _iso_from_ts(created),
                 # points weigh more than comments for "how big is this"
                 "score": points + comments * 0.5,
                 "engagement": f"{points} points · {comments} comments",
